@@ -1,6 +1,7 @@
 package com.ecobazaarx.v2.controller;
 
 import com.ecobazaarx.v2.dto.*;
+import com.ecobazaarx.v2.model.Cart;
 import com.ecobazaarx.v2.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

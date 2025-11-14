@@ -68,10 +68,11 @@ public class CartService {
 
         return mapToCartResponse(cart);
     }
+
     @Transactional(readOnly = true)
     public CartResponse getCartForUser(UserDetails userDetails) {
         User user = findUserByEmail(userDetails.getUsername());
-        Cart cart = cartRepository.findByUserIdWithItems(user.getId())
+        Cart cart = cartRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Cart not found for user"));
 
         return mapToCartResponse(cart);

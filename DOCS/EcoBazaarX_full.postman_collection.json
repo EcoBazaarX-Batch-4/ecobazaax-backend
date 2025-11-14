@@ -1,0 +1,421 @@
+{
+  "info": {
+    "name": "EcoBazaarX Full API",
+    "_postman_id": "ecobazaarx-full-api-collection",
+    "description": "Full Postman collection for EcoBazaarX backend. For endpoints that accept request bodies, see DOCS/postman_bodies.json for sample bodies keyed by `bodyKey` in the request description.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Register",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "" },
+        "url": { "raw": "{{base_url}}/api/v1/auth/register", "host": ["{{base_url}}"], "path": ["api","v1","auth","register"] },
+        "description": "bodyKey: auth_register"
+      }
+    },
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "" },
+        "url": { "raw": "{{base_url}}/api/v1/auth/login", "host": ["{{base_url}}"], "path": ["api","v1","auth","login"] },
+        "description": "bodyKey: auth_login"
+      }
+    },
+    {
+      "name": "Products - List",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/v1/products?page=0&size=10", "host": ["{{base_url}}"], "path": ["api","v1","products"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"}] }
+      }
+    },
+    {
+      "name": "Products - By ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/v1/products/{{productId}}", "host": ["{{base_url}}"], "path": ["api","v1","products","{{productId}}"] }
+      }
+    },
+    {
+      "name": "Products - Search",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/api/v1/products/search?query={{query}}&page=0&size=10", "host": ["{{base_url}}"], "path": ["api","v1","products","search"], "query": [{"key":"query","value":"{{query}}"},{"key":"page","value":"0"},{"key":"size","value":"10"}] },
+        "description": "Use query params: query, categoryId, minPrice, maxPrice, page, size, sort"
+      }
+    },
+    {
+      "name": "Products - Add Review",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ],
+        "body": { "mode": "raw", "raw": "" },
+        "url": { "raw": "{{base_url}}/api/v1/products/{{id}}/reviews", "host": ["{{base_url}}"], "path": ["api","v1","products","{{id}}","reviews"] },
+        "description": "bodyKey: product_add_review"
+      }
+    },
+    {
+      "name": "Products - Get Reviews",
+      "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/products/{{id}}/reviews?page=0&size=5", "host": ["{{base_url}}"], "path": ["api","v1","products","{{id}}","reviews"], "query": [{"key":"page","value":"0"},{"key":"size","value":"5"}] } }
+    },
+    {
+      "name": "Products - Related",
+      "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/products/{{id}}/related", "host": ["{{base_url}}"], "path": ["api","v1","products","{{id}}","related"] } }
+    },
+    {
+      "name": "Cart - Add Product",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ],
+        "body": { "mode": "raw", "raw": "" },
+        "url": { "raw": "{{base_url}}/api/v1/cart/add", "host": ["{{base_url}}"], "path": ["api","v1","cart","add"] },
+        "description": "bodyKey: cart_add"
+      }
+    },
+    {
+      "name": "Cart - Get My Cart",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/cart", "host": ["{{base_url}}"], "path": ["api","v1","cart"] } }
+    },
+    {
+      "name": "Cart - Update Item",
+      "request": {
+        "method": "PUT",
+        "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ],
+        "body": { "mode": "raw", "raw": "" },
+        "url": { "raw": "{{base_url}}/api/v1/cart/update/{{itemId}}", "host": ["{{base_url}}"], "path": ["api","v1","cart","update","{{itemId}}"] },
+        "description": "bodyKey: cart_update"
+      }
+    },
+    {
+      "name": "Cart - Remove Item",
+      "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/cart/remove/{{itemId}}", "host": ["{{base_url}}"], "path": ["api","v1","cart","remove","{{itemId}}"] }, "description": "No body" }
+    },
+    {
+      "name": "Cart - Apply Discount",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/cart/apply-discount", "host": ["{{base_url}}"], "path": ["api","v1","cart","apply-discount"] }, "description": "bodyKey: cart_apply_discount" }
+    },
+    {
+      "name": "Cart - Shipping Options",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/cart/shipping-options/{{addressId}}", "host": ["{{base_url}}"], "path": ["api","v1","cart","shipping-options","{{addressId}}"] }, "description": "No body" }
+    },
+    {
+      "name": "Cart - Select Shipping",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/cart/select-shipping", "host": ["{{base_url}}"], "path": ["api","v1","cart","select-shipping"] }, "description": "bodyKey: cart_select_shipping" }
+    },
+    {
+      "name": "Checkout - Place Order",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/checkout", "host": ["{{base_url}}"], "path": ["api","v1","checkout"] }, "description": "bodyKey: checkout_place_order" }
+    },
+    {
+      "name": "Profile - Get My Profile",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/profile/me", "host": ["{{base_url}}"], "path": ["api","v1","profile","me"] } }
+    },
+    {
+      "name": "Profile - Update My Profile",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/profile/me", "host": ["{{base_url}}"], "path": ["api","v1","profile","me"] }, "description": "bodyKey: profile_update" }
+    },
+    {
+      "name": "Profile - Change Password",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/profile/change-password", "host": ["{{base_url}}"], "path": ["api","v1","profile","change-password"] }, "description": "bodyKey: profile_change_password" }
+    },
+    {
+      "name": "Profile - Addresses - List",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/profile/addresses", "host": ["{{base_url}}"], "path": ["api","v1","profile","addresses"] } }
+    },
+    {
+      "name": "Profile - Addresses - Create",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/profile/addresses", "host": ["{{base_url}}"], "path": ["api","v1","profile","addresses"] }, "description": "bodyKey: address_create" }
+    },
+    {
+      "name": "Profile - Addresses - Get By ID",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/profile/addresses/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","profile","addresses","{{id}}"] } }
+    },
+    {
+      "name": "Profile - Addresses - Update",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/profile/addresses/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","profile","addresses","{{id}}"] }, "description": "bodyKey: address_update" }
+    },
+    {
+      "name": "Profile - Addresses - Delete",
+      "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/profile/addresses/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","profile","addresses","{{id}}"] } }
+    },
+    {
+      "name": "Wishlist - Get",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/profile/wishlist", "host": ["{{base_url}}"], "path": ["api","v1","profile","wishlist"] } }
+    },
+    {
+      "name": "Wishlist - Add",
+      "request": { "method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/profile/wishlist/{{productId}}", "host": ["{{base_url}}"], "path": ["api","v1","profile","wishlist","{{productId}}"] }, "description": "No body" }
+    },
+    {
+      "name": "Wishlist - Remove",
+      "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/profile/wishlist/{{productId}}", "host": ["{{base_url}}"], "path": ["api","v1","profile","wishlist","{{productId}}"] } }
+    },
+    {
+      "name": "Order History - List",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/profile/orders?page=0&size=10", "host": ["{{base_url}}"], "path": ["api","v1","profile","orders"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"}] } }
+    },
+    {
+      "name": "Order History - Details",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/profile/orders/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","profile","orders","{{id}}"] } }
+    },
+    {
+      "name": "Gamification - Eco Points History",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/profile/eco-points-history?page=0&size=10", "host": ["{{base_url}}"], "path": ["api","v1","profile","eco-points-history"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"}] } }
+    },
+    {
+      "name": "Tracking - Log Product View",
+      "request": { "method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/tracking/view/{{productId}}", "host": ["{{base_url}}"], "path": ["api","v1","tracking","view","{{productId}}"] }, "description": "No body" }
+    },
+    {
+      "name": "Recommendations - Homepage",
+      "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/recommendations/homepage", "host": ["{{base_url}}"], "path": ["api","v1","recommendations","homepage"] } }
+    },
+    {
+      "name": "Recommendations - My Recent",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/recommendations/me/recent", "host": ["{{base_url}}"], "path": ["api","v1","recommendations","me","recent"] } }
+    },
+    {
+      "name": "Leaderboard - Global",
+      "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/leaderboard/global", "host": ["{{base_url}}"], "path": ["api","v1","leaderboard","global"] } }
+    },
+    {
+      "name": "Leaderboard - By Level",
+      "request": { "method": "GET", "header": [], "url": { "raw": "{{base_url}}/api/v1/leaderboard/level/{{level}}", "host": ["{{base_url}}"], "path": ["api","v1","leaderboard","level","{{level}}"] } }
+    },
+    {
+      "name": "Seller - Apply to be Seller",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/seller/apply", "host": ["{{base_url}}"], "path": ["api","v1","seller","apply"] }, "description": "bodyKey: seller_apply" }
+    },
+    {
+      "name": "Seller - Application Status",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/seller/application-status", "host": ["{{base_url}}"], "path": ["api","v1","seller","application-status"] } }
+    },
+    {
+      "name": "Seller - Create Product",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/seller/products", "host": ["{{base_url}}"], "path": ["api","v1","seller","products"] }, "description": "bodyKey: seller_create_product" }
+    },
+    {
+      "name": "Seller - Get My Products",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/seller/products?page=0&size=10", "host": ["{{base_url}}"], "path": ["api","v1","seller","products"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"}] } }
+    },
+    {
+      "name": "Seller - Update Product",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/seller/products/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","seller","products","{{id}}"] }, "description": "bodyKey: seller_update_product" }
+    },
+    {
+      "name": "Seller - Delete Product",
+      "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/seller/products/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","seller","products","{{id}}"] } }
+    },
+    {
+      "name": "Seller - Update Store Profile",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/seller/profile", "host": ["{{base_url}}"], "path": ["api","v1","seller","profile"] }, "description": "bodyKey: seller_update_profile" }
+    },
+    {
+      "name": "Seller - Get Payout Details",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/seller/payout-details", "host": ["{{base_url}}"], "path": ["api","v1","seller","payout-details"] } }
+    },
+    {
+      "name": "Seller - Update Payout Details",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/seller/payout-details", "host": ["{{base_url}}"], "path": ["api","v1","seller","payout-details"] }, "description": "bodyKey: seller_update_payout" }
+    },
+    {
+      "name": "Insights - Profile",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/insights/profile", "host": ["{{base_url}}"], "path": ["api","v1","insights","profile"] } }
+    },
+    {
+      "name": "Insights - Seller",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/insights/seller", "host": ["{{base_url}}"], "path": ["api","v1","insights","seller"] } }
+    },
+    {
+      "name": "Insights - Seller Product Performance",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/insights/seller/product-performance", "host": ["{{base_url}}"], "path": ["api","v1","insights","seller","product-performance"] } }
+    },
+    {
+      "name": "Insights - Admin",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/insights/admin", "host": ["{{base_url}}"], "path": ["api","v1","insights","admin"] } }
+    },
+    {
+      "name": "Insights - Admin Leaderboards",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/insights/admin/leaderboards", "host": ["{{base_url}}"], "path": ["api","v1","insights","admin","leaderboards"] } }
+    },
+    {
+      "name": "Insights - Seller Export Sales (CSV)",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/insights/seller/export-sales", "host": ["{{base_url}}"], "path": ["api","v1","insights","seller","export-sales"] }, "description": "Produces text/csv" }
+    },
+    {
+      "name": "Insights - Admin Export All (CSV)",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/insights/admin/export-all", "host": ["{{base_url}}"], "path": ["api","v1","insights","admin","export-all"] }, "description": "Produces text/csv" }
+    },
+    {
+      "name": "Admin - Get Seller Applications",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/seller-applications", "host": ["{{base_url}}"], "path": ["api","v1","admin","seller-applications"] } }
+    },
+    {
+      "name": "Admin - Approve Seller",
+      "request": { "method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/seller-applications/approve/{{userId}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","seller-applications","approve","{{userId}}"] }, "description": "No body" }
+    },
+    {
+      "name": "Admin - Reject Seller",
+      "request": { "method": "POST", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/seller-applications/reject/{{userId}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","seller-applications","reject","{{userId}}"] }, "description": "No body" }
+    },
+    {
+      "name": "Admin - Create Category",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/categories", "host": ["{{base_url}}"], "path": ["api","v1","admin","categories"] }, "description": "bodyKey: admin_create_category" }
+    },
+    {
+      "name": "Admin - Get Categories",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/categories", "host": ["{{base_url}}"], "path": ["api","v1","admin","categories"] } }
+    },
+    {
+      "name": "Admin - Update Category",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/categories/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","categories","{{id}}"] }, "description": "bodyKey: admin_update_category" }
+    },
+    {
+      "name": "Admin - Delete Category",
+      "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/categories/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","categories","{{id}}"] } }
+    },
+    {
+      "name": "Admin - Create Material",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/materials", "host": ["{{base_url}}"], "path": ["api","v1","admin","materials"] }, "description": "bodyKey: admin_create_material" }
+    },
+    {
+      "name": "Admin - Get Materials",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/materials", "host": ["{{base_url}}"], "path": ["api","v1","admin","materials"] } }
+    },
+    {
+      "name": "Admin - Update Material",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/materials/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","materials","{{id}}"] }, "description": "bodyKey: admin_update_material" }
+    },
+    {
+      "name": "Admin - Delete Material",
+      "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/materials/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","materials","{{id}}"] } }
+    },
+    {
+      "name": "Admin - Create Manufacturing Process",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/manufacturing-processes", "host": ["{{base_url}}"], "path": ["api","v1","admin","manufacturing-processes"] }, "description": "bodyKey: admin_create_manufacturing_process" }
+    },
+    {
+      "name": "Admin - Get Manufacturing Processes",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/manufacturing-processes", "host": ["{{base_url}}"], "path": ["api","v1","admin","manufacturing-processes"] } }
+    },
+    {
+      "name": "Admin - Update Manufacturing Process",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/manufacturing-processes/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","manufacturing-processes","{{id}}"] }, "description": "bodyKey: admin_update_manufacturing_process" }
+    },
+    {
+      "name": "Admin - Delete Manufacturing Process",
+      "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/manufacturing-processes/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","manufacturing-processes","{{id}}"] } }
+    },
+    {
+      "name": "Admin - Create Packaging Material",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/packaging-materials", "host": ["{{base_url}}"], "path": ["api","v1","admin","packaging-materials"] }, "description": "bodyKey: admin_create_packaging_material" }
+    },
+    {
+      "name": "Admin - Get Packaging Materials",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/packaging-materials", "host": ["{{base_url}}"], "path": ["api","v1","admin","packaging-materials"] } }
+    },
+    {
+      "name": "Admin - Update Packaging Material",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/packaging-materials/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","packaging-materials","{{id}}"] }, "description": "bodyKey: admin_update_packaging_material" }
+    },
+    {
+      "name": "Admin - Delete Packaging Material",
+      "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/packaging-materials/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","packaging-materials","{{id}}"] } }
+    },
+    {
+      "name": "Admin - Create Transport Zone",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/transport-zones", "host": ["{{base_url}}"], "path": ["api","v1","admin","transport-zones"] }, "description": "bodyKey: admin_create_transport_zone" }
+    },
+    {
+      "name": "Admin - Get Transport Zones",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/transport-zones", "host": ["{{base_url}}"], "path": ["api","v1","admin","transport-zones"] } }
+    },
+    {
+      "name": "Admin - Get Transport Zone By ID",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/transport-zones/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","transport-zones","{{id}}"] } }
+    },
+    {
+      "name": "Admin - Update Transport Zone",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/transport-zones/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","transport-zones","{{id}}"] }, "description": "bodyKey: admin_update_transport_zone" }
+    },
+    {
+      "name": "Admin - Delete Transport Zone",
+      "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/transport-zones/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","transport-zones","{{id}}"] } }
+    },
+    {
+      "name": "Admin - Get Users",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/users?page=0&size=10", "host": ["{{base_url}}"], "path": ["api","v1","admin","users"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"}] }, "description": "Optional query params: query, role, status, page, size, sort" }
+    },
+    {
+      "name": "Admin - Update User",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/users/{{userId}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","users","{{userId}}"] }, "description": "bodyKey: admin_update_user" }
+    },
+    {
+      "name": "Admin - Create Admin",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/create-admin", "host": ["{{base_url}}"], "path": ["api","v1","admin","create-admin"] }, "description": "bodyKey: admin_create_admin" }
+    },
+    {
+      "name": "Admin - Get Products (Admin View)",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/products?page=0&size=10", "host": ["{{base_url}}"], "path": ["api","v1","admin","products"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"}] } }
+    },
+    {
+      "name": "Admin - Get Orders",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/orders?page=0&size=10", "host": ["{{base_url}}"], "path": ["api","v1","admin","orders"], "query": [{"key":"page","value":"0"},{"key":"size","value":"10"}] }, "description": "Optional params: email, status, page, size, sort" }
+    },
+    {
+      "name": "Admin - Update Order Status",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/orders/{{id}}/status", "host": ["{{base_url}}"], "path": ["api","v1","admin","orders","{{id}}","status"] }, "description": "bodyKey: admin_update_order_status" }
+    },
+    {
+      "name": "Admin - Create Tax Rate",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/config/taxes", "host": ["{{base_url}}"], "path": ["api","v1","admin","config","taxes"] }, "description": "bodyKey: admin_create_tax" }
+    },
+    {
+      "name": "Admin - Get Tax Rates",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/config/taxes", "host": ["{{base_url}}"], "path": ["api","v1","admin","config","taxes"] } }
+    },
+    {
+      "name": "Admin - Update Tax Rate",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/config/taxes/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","config","taxes","{{id}}"] }, "description": "bodyKey: admin_update_tax" }
+    },
+    {
+      "name": "Admin - Delete Tax Rate",
+      "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/config/taxes/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","config","taxes","{{id}}"] } }
+    },
+    {
+      "name": "Admin - Create Discount",
+      "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/config/discounts", "host": ["{{base_url}}"], "path": ["api","v1","admin","config","discounts"] }, "description": "bodyKey: admin_create_discount" }
+    },
+    {
+      "name": "Admin - Get Discounts",
+      "request": { "method": "GET", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/config/discounts", "host": ["{{base_url}}"], "path": ["api","v1","admin","config","discounts"] } }
+    },
+    {
+      "name": "Admin - Update Discount",
+      "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "body": { "mode": "raw", "raw": "" }, "url": { "raw": "{{base_url}}/api/v1/admin/config/discounts/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","config","discounts","{{id}}"] }, "description": "bodyKey: admin_update_discount" }
+    },
+    {
+      "name": "Admin - Delete Discount",
+      "request": { "method": "DELETE", "header": [ { "key": "Authorization", "value": "Bearer {{jwt}}" } ], "url": { "raw": "{{base_url}}/api/v1/admin/config/discounts/{{id}}", "host": ["{{base_url}}"], "path": ["api","v1","admin","config","discounts","{{id}}"] } }
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080" },
+    { "key": "jwt", "value": "" },
+    { "key": "productId", "value": "1" },
+    { "key": "id", "value": "1" },
+    { "key": "itemId", "value": "1" },
+    { "key": "userId", "value": "1" },
+    { "key": "level", "value": "1" },
+    { "key": "query", "value": "eco" }
+  ]
+}

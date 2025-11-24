@@ -21,15 +21,19 @@ public class LeaderboardService {
 
     private final UserRepository userRepository;
 
+    // --- FIXED: Carbon Efficiency Logic ---
+    // 1. Average Carbon (Low to High) - Efficiency is key
+    // 2. Rank Level (High to Low) - Tie-breaker for activity
     private final Sort leaderboardSort = Sort.by(
             Sort.Order.asc("lifetimeAverageCarbon"),
-            Sort.Order.asc("rankLevelAchievedAt")
+            Sort.Order.desc("rankLevel")
     );
 
     @Transactional(readOnly = true)
     public List<LeaderboardEntryDto> getGlobalLeaderboard() {
         Pageable top100 = PageRequest.of(0, 100, leaderboardSort);
-        Page<User> userPage = userRepository.findAll(top100);
+        // Use the pure customer filter (Active Customers Only)
+        Page<User> userPage = userRepository.findPureCustomers(top100);
         return mapToDtoList(userPage);
     }
 
@@ -51,6 +55,7 @@ public class LeaderboardService {
                             .userName(user.getName())
                             .rankLevel(user.getRankLevel())
                             .averageCarbonFootprint(user.getLifetimeAverageCarbon())
+                            .ecoPoints(user.getEcoPoints())
                             .build();
                 })
                 .collect(Collectors.toList());

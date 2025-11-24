@@ -11,4 +11,5 @@ public class LeaderboardEntryDto {
     private String userName;
     private int rankLevel;
     private BigDecimal averageCarbonFootprint;
+    private int ecoPoints;
 }

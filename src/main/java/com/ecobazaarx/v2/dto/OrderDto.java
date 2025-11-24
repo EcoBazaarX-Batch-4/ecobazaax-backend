@@ -16,4 +16,10 @@ public class OrderDto {
     private BigDecimal totalAmount;
     private BigDecimal totalCarbonFootprint;
     private List<OrderItemDto> orderItems;
+    private BigDecimal shippingCost; // <-- ADD THIS FIELD
+    private BigDecimal taxAmount;    // <-- ADD THIS FIELD
+    private BigDecimal discountAmount; // <-- ADD THIS FIELD
+    private String shippingAddress;
+    private String customerName;
+    private String customerEmail;
 }

@@ -78,4 +78,11 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
             "AND oi.order.status = 'DELIVERED' " +
             "ORDER BY oi.order.orderDate DESC")
     List<Order> findAllDeliveredOrdersBySellerId(@Param("sellerId") Long sellerId);
+
+    @Query("SELECT DISTINCT o FROM Order o " +
+            "JOIN FETCH o.user u " +   // <-- ADDED THIS LINE
+            "JOIN FETCH o.orderItems oi " +
+            "WHERE oi.product.seller.id = :sellerId " +
+            "ORDER BY o.orderDate DESC")
+    Page<Order> findOrdersBySellerId(@Param("sellerId") Long sellerId, Pageable pageable);
 }

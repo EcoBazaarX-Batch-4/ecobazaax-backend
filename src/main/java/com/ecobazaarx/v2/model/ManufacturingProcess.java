@@ -23,4 +23,10 @@ public class ManufacturingProcess {
 
     @Column(nullable = false, precision = 10, scale = 4)
     private BigDecimal emissionPerKg;
+
+    public ManufacturingProcess(String name, BigDecimal emissionPerKg) {
+        this.name = name;
+        this.emissionPerKg = emissionPerKg;
+    }
+
 }

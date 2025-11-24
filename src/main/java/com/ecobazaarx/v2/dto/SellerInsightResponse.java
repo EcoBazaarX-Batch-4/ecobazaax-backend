@@ -11,5 +11,6 @@ public class SellerInsightResponse {
     private long totalProductsSold;
     private long totalOrders;
     private BigDecimal averageProductCarbon;
+    private long totalInventory;
 }
 

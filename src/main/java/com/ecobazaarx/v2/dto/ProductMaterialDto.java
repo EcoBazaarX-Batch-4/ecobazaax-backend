@@ -7,4 +7,9 @@ import java.math.BigDecimal;
 public class ProductMaterialDto {
     private Integer materialId; // material id
     private BigDecimal weightKg; // material weight
+
+    public ProductMaterialDto(Integer materialId, BigDecimal weightKg) {
+        this.materialId = materialId;
+        this.weightKg = weightKg;
+    }
 }

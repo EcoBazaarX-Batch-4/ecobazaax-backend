@@ -32,6 +32,11 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
             "ORDER BY u.lifetimeAverageCarbon ASC, u.rankLevelAchievedAt ASC")
     List<User> findGreenestCustomers(Pageable pageable);
 
+//    @Query("SELECT u FROM User u " +
+//            "WHERE u.roles.size = 1 " +
+//            "AND EXISTS (SELECT r FROM u.roles r WHERE r.name = 'ROLE_CUSTOMER')")
+//    Page<User> findPureCustomers(Pageable pageable);
+
     boolean existsByReferralCode(String referralCode);
     Optional<User> findByReferralCode(String referralCode);
 }

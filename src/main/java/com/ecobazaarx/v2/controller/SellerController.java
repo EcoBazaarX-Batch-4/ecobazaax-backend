@@ -2,6 +2,7 @@ package com.ecobazaarx.v2.controller;
 
 import com.ecobazaarx.v2.dto.*;
 import com.ecobazaarx.v2.model.SellerApplicationStatus;
+import com.ecobazaarx.v2.service.OrderHistoryService;
 import com.ecobazaarx.v2.service.ProductService;
 import com.ecobazaarx.v2.service.SellerService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class SellerController {
 
     private final SellerService sellerService;
     private final ProductService productService;
+    private final OrderHistoryService orderHistoryService;
 
     @PostMapping("/apply")
     @PreAuthorize("hasRole('CUSTOMER')")
@@ -86,11 +88,12 @@ public class SellerController {
 
     @DeleteMapping("/products/{id}")
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<Void> deleteMyProduct(
+    public ResponseEntity<Void> archiveMyProduct(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails sellerDetails
     ) {
-        productService.deleteSellerProduct(id, sellerDetails);
+        // We call the archive service method instead of the delete service method
+        productService.archiveSellerProduct(id, sellerDetails);
         return ResponseEntity.noContent().build();
     }
 
@@ -120,4 +123,21 @@ public class SellerController {
     ) {
         return ResponseEntity.ok(sellerService.updatePayoutDetails(sellerDetails, request));
     }
+
+    @GetMapping("/orders")
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<Page<OrderDto>> getMyOrders(
+            @AuthenticationPrincipal UserDetails sellerDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "orderDate,desc") String[] sort
+    ) {
+        String sortField = sort[0];
+        Sort.Direction sortDirection = (sort.length > 1 && sort[1].equalsIgnoreCase("asc")) ?
+                Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
+
+        return ResponseEntity.ok(orderHistoryService.getSellerOrders(sellerDetails, pageable));
+    }
+
 }

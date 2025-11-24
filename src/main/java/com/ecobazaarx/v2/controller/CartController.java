@@ -64,6 +64,11 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
 
+    @GetMapping("/discounts")
+    public ResponseEntity<List<DiscountResponse>> getAvailableDiscounts() {
+        return ResponseEntity.ok(cartService.getAvailableDiscounts());
+    }
+
     @GetMapping("/shipping-options/{addressId}")
     public ResponseEntity<List<ShippingOptionDto>> getShippingOptions(
             @PathVariable Long addressId,

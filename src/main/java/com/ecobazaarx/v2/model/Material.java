@@ -30,4 +30,10 @@ public class Material {
     // source for the information
     @Column(length = 255)
     private String source;
+
+    public Material(String name, BigDecimal emissionPerKg, String source) {
+        this.name = name;
+        this.emissionPerKg = emissionPerKg;
+        this.source = source;
+    }
 }

@@ -25,4 +25,9 @@ public class PackagingMaterial {
     // carbon factor per kg
     @Column(nullable = false, precision = 10, scale = 4)
     private BigDecimal emissionPerKg;
+
+    public PackagingMaterial(String name, BigDecimal emissionPerKg) {
+        this.name = name;
+        this.emissionPerKg = emissionPerKg;
+    }
 }

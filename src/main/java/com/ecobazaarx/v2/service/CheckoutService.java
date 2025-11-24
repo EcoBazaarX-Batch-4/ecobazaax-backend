@@ -37,7 +37,6 @@ public class CheckoutService {
     private final GamificationService gamificationService;
 
     private static final int REFERRAL_BONUS_POINTS = 500;
-    // This is our conversion rate: 100 points = 1.00 (e.g., in INR)
     private static final BigDecimal ECO_POINT_CONVERSION_RATE = new BigDecimal("0.01");
 
     @Value("${stripe.api.key}")
@@ -67,29 +66,20 @@ public class CheckoutService {
         CartResponse cartTotals = cartService.mapToCartResponse(cart);
         BigDecimal finalTotal = cartTotals.getGrandTotal();
 
-        // 4. NEW: Eco Points Logic
+        // 4. Eco Points Logic
         int pointsToRedeem = checkoutRequest.getEcoPointsToRedeem();
         BigDecimal pointsAmountSaved = BigDecimal.ZERO;
 
         if (pointsToRedeem > 0) {
-            // Check if user has enough points
             if (user.getEcoPoints() < pointsToRedeem) {
                 throw new IllegalStateException("Not enough Eco Points to redeem.");
             }
-
-            // Calculate the monetary value
             pointsAmountSaved = new BigDecimal(pointsToRedeem).multiply(ECO_POINT_CONVERSION_RATE);
-
-            // Ensure points don't save more than the grand total
             if (pointsAmountSaved.compareTo(finalTotal) > 0) {
                 pointsAmountSaved = finalTotal;
-                // In a V3, we would recalculate 'pointsToRedeem' here
             }
-
-            // Subtract from the final total
             finalTotal = finalTotal.subtract(pointsAmountSaved);
         }
-        // ---------------------------------
 
         // 5. Final Stock Check
         for (CartItem item : cart.getItems()) {
@@ -99,9 +89,9 @@ public class CheckoutService {
             }
         }
 
-        // 6. Create Stripe Payment Intent (with the FINAL total)
+        // 6. Create Stripe Payment Intent
         PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                .setAmount(finalTotal.multiply(new BigDecimal(100)).longValue()) // Stripe wants cents
+                .setAmount(finalTotal.multiply(new BigDecimal(100)).longValue())
                 .setCurrency("inr")
                 .setPaymentMethod(checkoutRequest.getPaymentMethodId())
                 .addPaymentMethodType("card")
@@ -112,14 +102,11 @@ public class CheckoutService {
         PaymentIntent paymentIntent = PaymentIntent.create(params);
 
         if (!"succeeded".equals(paymentIntent.getStatus())) {
-            // Payment needs 3D Secure or other steps
             return CheckoutResponse.builder()
                     .clientSecret(paymentIntent.getClientSecret())
                     .order(null)
                     .build();
         }
-
-        // --- PAYMENT WAS SUCCESSFUL, COMMIT THE ORDER ---
 
         // 7. Create the Order
         Order order = createOrderFromCart(user, cart, cartTotals, pointsToRedeem, pointsAmountSaved);
@@ -129,12 +116,9 @@ public class CheckoutService {
 
         for (CartItem cartItem : cart.getItems()) {
             Product product = cartItem.getProduct();
-
-            // 8. Create OrderItems (Snapshotting)
             OrderItem orderItem = createOrderItemFromCartItem(order, product, cartItem);
             orderItems.add(orderItem);
 
-            // 9. Update Stock
             product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
             productRepository.save(product);
 
@@ -143,10 +127,10 @@ public class CheckoutService {
         orderItemRepository.saveAll(orderItems);
         order.setOrderItems(orderItems);
 
-        // 10. Update User Rank
+        // 10. Update User Stats
         updateUserRankStats(user, cartTotals.getProductsTotalCarbon().add(cartTotals.getShippingCarbon()));
 
-        // 11. Update User Points & Ledger
+        // 11. Update Points
         int finalEcoPoints = user.getEcoPoints() + totalEcoPointsAwarded - pointsToRedeem;
         user.setEcoPoints(finalEcoPoints);
 
@@ -157,56 +141,48 @@ public class CheckoutService {
             gamificationService.addPointsForAction(user, -pointsToRedeem, "Redeemed on Order #" + order.getId());
         }
 
-        // 12. Check for Referral
+        // 12. Referral
         if (user.getTotalOrderCount() == 1 && user.getReferrer() != null) {
             User referrer = user.getReferrer();
-            gamificationService.addPointsForAction(
-                    referrer,
-                    REFERRAL_BONUS_POINTS,
-                    "Referred new user: " + user.getName()
-            );
+            gamificationService.addPointsForAction(referrer, REFERRAL_BONUS_POINTS, "Referred new user: " + user.getName());
             userRepository.save(referrer);
         }
         userRepository.save(user);
 
-        // 13. Clear the Cart
+        // 13. Clear Cart
         cart.getItems().clear();
         cart.setAppliedDiscount(null);
         cart.setShippingAddress(null);
         cart.setSelectedTransportZone(null);
         cartRepository.save(cart);
 
-        // 14. Return the new Order
         return CheckoutResponse.builder()
-                .clientSecret(null) // Payment was instant
+                .clientSecret(null)
                 .order(cartService.mapOrderToOrderDto(order))
                 .build();
     }
 
-    // --- UPDATED HELPER ---
     private Order createOrderFromCart(User user, Cart cart, CartResponse totals, int pointsRedeemed, BigDecimal pointsAmountSaved) {
         Order order = new Order();
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PAID);
-
-        // Set the final charged amount
         order.setTotalAmount(totals.getGrandTotal().subtract(pointsAmountSaved));
-
-        BigDecimal totalCarbon = totals.getProductsTotalCarbon().add(totals.getShippingCarbon());
-        order.setTotalCarbonFootprint(totalCarbon);
+        order.setTotalCarbonFootprint(totals.getProductsTotalCarbon().add(totals.getShippingCarbon()));
 
         if(cart.getAppliedDiscount() != null) {
             order.setDiscountCode(cart.getAppliedDiscount().getCode());
             order.setDiscountAmount(totals.getAppliedDiscount().getAmountSaved());
         }
 
-        // --- ADDED NEW FIELDS ---
         order.setEcoPointsRedeemed(pointsRedeemed);
         order.setEcoPointsAmount(pointsAmountSaved);
-        // ----------------------
 
-        order.setShippingAddress(cart.getShippingAddress().toString()); // Snapshot the address
+        Address addr = cart.getShippingAddress();
+        String formattedAddress = String.format("%s: %s, %s, %s %s, %s",
+                addr.getLabel(), addr.getStreet(), addr.getCity(), addr.getState(), addr.getPostalCode(), addr.getCountry());
+        order.setShippingAddress(formattedAddress); // Save readable string
+
         order.setShippingCost(totals.getShippingCost());
         order.setTaxAmount(totals.getTaxAmount());
 
@@ -218,31 +194,23 @@ public class CheckoutService {
         item.setOrder(order);
         item.setProduct(product);
         item.setQuantity(cartItem.getQuantity());
-
         item.setProductName(product.getName());
         item.setPricePerItem(product.getPrice());
         item.setCarbonFootprintPerItem(product.getCradleToWarehouseFootprint());
-
         return item;
     }
 
-    // --- UPDATED HELPER (Renamed from updateUserStats) ---
     private void updateUserRankStats(User user, BigDecimal orderCarbon) {
-        // This helper ONLY handles ranking, not points.
-
         int newTotalOrderCount = user.getTotalOrderCount() + 1;
         BigDecimal newLifetimeTotalCarbon = user.getLifetimeTotalCarbon().add(orderCarbon);
-
         BigDecimal newLifetimeAverageCarbon = newLifetimeTotalCarbon.divide(
                 new BigDecimal(newTotalOrderCount), 4, RoundingMode.HALF_UP
         );
-
         int newRankLevel = calculateRankLevel(newTotalOrderCount);
 
         if (newRankLevel > user.getRankLevel()) {
             user.setRankLevelAchievedAt(LocalDateTime.now());
         }
-
         user.setTotalOrderCount(newTotalOrderCount);
         user.setLifetimeTotalCarbon(newLifetimeTotalCarbon);
         user.setLifetimeAverageCarbon(newLifetimeAverageCarbon);
@@ -250,13 +218,12 @@ public class CheckoutService {
     }
 
     private int calculateRankLevel(int totalOrderCount) {
-        if (totalOrderCount < 5) return 0;   // 0-4 (Sprout)
-        if (totalOrderCount < 15) return 1;  // 5-14 (Sapling)
-        if (totalOrderCount < 30) return 2;  // 15-29 (Guardian)
-        if (totalOrderCount < 50) return 3;  // 30-49 (Eco-Hero)
-        if (totalOrderCount < 75) return 4;  // 50-74 (Earth-Warden)
-
-        return 5; // 75+ (Planet-Savior)
+        if (totalOrderCount < 5) return 0;
+        if (totalOrderCount < 15) return 1;
+        if (totalOrderCount < 30) return 2;
+        if (totalOrderCount < 50) return 3;
+        if (totalOrderCount < 75) return 4;
+        return 5;
     }
 
     private User findUserByEmail(String email) {

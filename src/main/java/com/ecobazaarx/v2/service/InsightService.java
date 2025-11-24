@@ -96,11 +96,19 @@ public class InsightService {
             avgCarbon = BigDecimal.ZERO;
         }
 
+        long inventoryCount = productRepository.count((root, query, cb) ->
+                cb.and(
+                        cb.equal(root.get("seller").get("id"), seller.getId()),
+                        cb.isFalse(root.get("isArchived"))
+                )
+        );
+
         return SellerInsightResponse.builder()
                 .totalRevenue(salesStats.totalRevenue)
                 .totalProductsSold(salesStats.totalProductsSold)
                 .totalOrders(salesStats.totalOrders)
                 .averageProductCarbon(avgCarbon.setScale(2, RoundingMode.HALF_UP))
+                .totalInventory(inventoryCount)
                 .build();
     }
 

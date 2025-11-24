@@ -15,8 +15,10 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
     Page<Product> findBySellerId(Long sellerId, Pageable pageable);
-    @Query("SELECT AVG(p.cradleToWarehouseFootprint) FROM Product p WHERE p.seller.id = :sellerId")
+
+    @Query("SELECT COALESCE(AVG(p.cradleToWarehouseFootprint), 0.0) FROM Product p WHERE p.seller.id = :sellerId")
     BigDecimal getSellerAverageProductCarbon(@Param("sellerId") Long sellerId);
+
     List<Product> findBySellerIdOrderByStockQuantityAsc(Long sellerId, Pageable pageable);
     List<Product> findBySellerIdOrderByCradleToWarehouseFootprintAsc(Long sellerId, Pageable pageable);
     List<Product> findBySellerIdOrderByCradleToWarehouseFootprintDesc(Long sellerId, Pageable pageable);

@@ -54,6 +54,12 @@ public class Product {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean isArchived = false;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean featured = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
     private User seller;

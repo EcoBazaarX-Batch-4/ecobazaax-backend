@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public class OrderItemDto {
     private Long productId;
     private String productName;
+    private String imageUrl;
     private int quantity;
     private BigDecimal pricePerItem;
     private BigDecimal carbonFootprintPerItem;

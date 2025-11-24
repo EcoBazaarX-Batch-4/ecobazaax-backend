@@ -157,6 +157,16 @@ public class CartService {
     }
 
     @Transactional(readOnly = true)
+    public List<DiscountResponse> getAvailableDiscounts() {
+        return discountRepository.findActiveDiscounts(LocalDateTime.now()).stream()
+                .map(d -> DiscountResponse.builder()
+                        .code(d.getCode())
+                        .amountSaved(d.getValue()) // reusing field for value/percentage
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public List<ShippingOptionDto> getShippingOptions(Long addressId, UserDetails userDetails) {
         User user = findUserByEmail(userDetails.getUsername());
         Address address = addressRepository.findById(addressId)
@@ -236,7 +246,11 @@ public class CartService {
 
         if (appliedDiscount != null) {
             if (appliedDiscount.getDiscountType() == DiscountType.PERCENTAGE) {
-                amountSaved = productsTotalAmount.multiply(appliedDiscount.getValue().divide(new BigDecimal(100)));
+                // --- FIX: Added RoundingMode to prevent ArithmeticException ---
+                amountSaved = productsTotalAmount.multiply(
+                        appliedDiscount.getValue().divide(new BigDecimal(100), 4, RoundingMode.HALF_UP)
+                );
+                // -------------------------------------------------------------
             } else if (appliedDiscount.getDiscountType() == DiscountType.FIXED_AMOUNT) {
                 amountSaved = appliedDiscount.getValue();
             }
@@ -268,7 +282,8 @@ public class CartService {
         if (cart.getShippingAddress() != null) {
             TaxRate taxRate = taxRateRepository.findByName("GST").orElse(null);
             if (taxRate != null) {
-                taxAmount = taxableAmount.multiply(taxRate.getRate().divide(new BigDecimal(100)));
+                // FIX: Rounding Mode here too just in case
+                taxAmount = taxableAmount.multiply(taxRate.getRate().divide(new BigDecimal(100), 4, RoundingMode.HALF_UP));
             }
         }
 
